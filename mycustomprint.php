@@ -195,10 +195,27 @@ class MyCustomPrint extends Module
             'currency_label' => Configuration::get(self::CONFIG_CURRENCY_LABEL),
             'blanks' => array_pad($blanks, 6, ['id' => '', 'label' => '', 'base' => '', 'note' => '']),
             'methods' => array_pad($methods, 6, ['id' => '', 'label' => '', 'note' => '', 'fee' => '']),
-            'form_action' => AdminController::$currentIndex . '&configure=' . $this->name . '&token=' . Tools::getAdminTokenLite('AdminModules'),
+            'form_action' => $this->getModuleConfigurationPageLink(),
         ]);
 
         return $this->context->smarty->fetch($this->getLocalPath() . 'views/templates/admin/configure.tpl');
+    }
+
+    /**
+     * Builds the "save settings" form action for the admin configure screen.
+     * PS 9's admin is Symfony-routed, so AdminController::$currentIndex already
+     * holds the full current request path — appending query params to it (the
+     * legacy PS 1.6 pattern) produces a doubled/invalid path once the router
+     * re-resolves it. Link::getAdminLink() is the version-safe way to build
+     * this: it bridges legacy controller+params into a proper routed URL.
+     */
+    protected function getModuleConfigurationPageLink()
+    {
+        return $this->context->link->getAdminLink('AdminModules', true, [], [
+            'configure' => $this->name,
+            'tab_module' => $this->tab,
+            'module_name' => $this->name,
+        ]);
     }
 
     /**
