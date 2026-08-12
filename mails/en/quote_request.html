@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New custom print request</title>
+</head>
+<body style="margin:0;padding:0;background:#f2f2f1;font-family:Arial,Helvetica,sans-serif;color:#0a0a0a;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f2f1;padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #c9c9c6;">
+          <tr>
+            <td style="background:#0a0a0a;padding:20px 28px;">
+              <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#e3a008;">Darija Stile</span>
+              <h1 style="margin:6px 0 0;font-size:20px;color:#ffffff;">New custom print request</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px 28px;">
+              <h2 style="font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#787876;margin:0 0 8px;">Customer</h2>
+              <p style="margin:0 0 4px;font-size:15px;">{firstname} {lastname}</p>
+              <p style="margin:0 0 4px;font-size:15px;"><a href="mailto:{email}" style="color:#0a0a0a;">{email}</a></p>
+              <p style="margin:0 0 20px;font-size:15px;">{phone}</p>
+
+              <h2 style="font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#787876;margin:0 0 8px;">Order</h2>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;margin-bottom:20px;">
+                <tr><td style="padding:4px 0;color:#787876;">Blank</td><td style="padding:4px 0;text-align:right;">{blank}</td></tr>
+                <tr><td style="padding:4px 0;color:#787876;">Placement</td><td style="padding:4px 0;text-align:right;">{placement}</td></tr>
+                <tr><td style="padding:4px 0;color:#787876;">Method</td><td style="padding:4px 0;text-align:right;">{method}</td></tr>
+                <tr><td style="padding:4px 0;color:#787876;">Size</td><td style="padding:4px 0;text-align:right;">{size}</td></tr>
+                <tr><td style="padding:4px 0;color:#787876;">Quantity</td><td style="padding:4px 0;text-align:right;">{quantity}</td></tr>
+                <tr>
+                  <td style="padding:8px 0 0;border-top:1px solid #e2e2e0;font-weight:bold;">Estimate</td>
+                  <td style="padding:8px 0 0;border-top:1px solid #e2e2e0;text-align:right;font-weight:bold;">{estimated_total}</td>
+                </tr>
+              </table>
+
+              <h2 style="font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#787876;margin:0 0 8px;">Brief</h2>
+              <p style="margin:0 0 20px;font-size:15px;line-height:1.6;">{brief}</p>
+
+              {artwork_block}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

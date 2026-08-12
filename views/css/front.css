@@ -1,0 +1,667 @@
+/**
+ * Custom Print Studio — studio-specific layout only. Colors, fonts, radii
+ * and spacing all read the Darija Stile brand tokens already declared
+ * globally in theme.css (--ink-black, --saffron, --gray-*, --font-mono,
+ * --font-accent, --font-body).
+ */
+
+.mcp-studio {
+  --mcp-gutter: clamp(24px, 5vw, 72px);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(32px, 4vw, 56px) var(--mcp-gutter) clamp(56px, 6vw, 96px);
+  color: var(--ink-black);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+.mcp-studio * {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.mcp-studio__mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Intro */
+
+.mcp-studio__intro {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 44px;
+}
+
+.mcp-studio__intro-text {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: min(52ch, 100%);
+}
+
+.mcp-studio__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.mcp-studio__title {
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.mcp-studio__lede {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-body);
+  margin: 0;
+}
+
+.mcp-studio__steps {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 24px 40px;
+}
+
+.mcp-studio__step {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mcp-studio__step-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--saffron);
+}
+
+.mcp-studio__step-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+/* Alerts */
+
+.mcp-studio__alert {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  border: 1px solid var(--gray-300);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mcp-studio__alert--error {
+  border-color: var(--souk-rose);
+  color: var(--souk-rose);
+}
+
+.mcp-studio__alert--error ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.mcp-studio__alert--success {
+  border-color: var(--atlas-sage);
+  color: var(--ink-black);
+}
+
+/* Layout */
+
+.mcp-studio__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: start;
+}
+
+@media (max-width: 991.98px) {
+  .mcp-studio__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Preview */
+
+.mcp-studio__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 96px;
+}
+
+@media (max-width: 991.98px) {
+  .mcp-studio__preview {
+    position: static;
+  }
+}
+
+.mcp-studio__frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: var(--gray-100);
+  overflow: hidden;
+  border: 1px solid var(--gray-300);
+}
+
+.mcp-studio__blank-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mcp-studio__blank-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.mcp-studio__artwork {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  width: 62%;
+  transform: translateX(-50%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.mcp-studio__print-area {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  width: 62%;
+  aspect-ratio: 1 / 1;
+  transform: translateX(-50%);
+  border: 1px dashed var(--ink-black);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.mcp-studio__print-area-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-black);
+  position: absolute;
+  top: 5px;
+  left: 6px;
+}
+
+.mcp-studio__preview-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.mcp-studio__scale {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 1;
+  max-width: 190px;
+}
+
+.mcp-studio__scale input {
+  flex: 1;
+  accent-color: var(--ink-black);
+}
+
+/* Fields */
+
+.mcp-studio__fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.mcp-studio__block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 32px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.mcp-studio__block--last {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.mcp-studio__block-head {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+}
+
+.mcp-studio__block-title {
+  font-family: var(--font-accent);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink-black);
+}
+
+/* Dropzone */
+
+.mcp-studio__dropzone {
+  position: relative;
+  border: 1px dashed var(--gray-300);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mcp-studio__dropzone--active {
+  border-color: var(--ink-black);
+  background: var(--gray-100);
+}
+
+.mcp-studio__dropzone-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-black);
+}
+
+.mcp-studio__dropzone-hint {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+.mcp-studio__dropzone input[type='file'] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.mcp-studio__help {
+  color: var(--gray-500);
+  line-height: 1.7;
+}
+
+/* Blank grid */
+
+.mcp-studio__blank-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+}
+
+.mcp-studio__blank-option {
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--gray-200);
+  padding: 14px 16px 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--gray-500);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mcp-studio__blank-option--active {
+  color: var(--ink-black);
+}
+
+.mcp-studio__blank-option-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mcp-studio__blank-dot {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--gray-300);
+  background: transparent;
+}
+
+.mcp-studio__blank-option--active .mcp-studio__blank-dot {
+  background: var(--saffron);
+  border-color: var(--saffron);
+}
+
+.mcp-studio__blank-option-note {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--gray-500);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Size row */
+
+.mcp-studio__size-row {
+  display: flex;
+  gap: 8px;
+  padding-top: 20px;
+}
+
+.mcp-studio__size-option {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  width: 44px;
+  height: 40px;
+  cursor: pointer;
+  background: var(--white, #fff);
+  color: var(--ink-black);
+  border: 1px solid var(--gray-300);
+}
+
+.mcp-studio__size-option--active {
+  background: var(--ink-black);
+  color: #fff;
+  border-color: var(--ink-black);
+}
+
+.mcp-studio__size-option:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Placement row */
+
+.mcp-studio__placement-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mcp-studio__placement-option {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 15px;
+  cursor: pointer;
+  background: #fff;
+  color: var(--ink-black);
+  border: 1px solid var(--gray-300);
+}
+
+.mcp-studio__placement-option--active {
+  background: var(--ink-black);
+  color: #fff;
+  border-color: var(--ink-black);
+}
+
+/* Method list */
+
+.mcp-studio__method-list {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.mcp-studio__method-option {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-top: 1px solid var(--gray-200);
+  cursor: pointer;
+}
+
+.mcp-studio__method-radio {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-top: 3px;
+  flex-shrink: 0;
+  border: 1px solid var(--gray-300);
+  background: transparent;
+}
+
+.mcp-studio__method-option--active .mcp-studio__method-radio {
+  border-color: var(--ink-black);
+  background: var(--ink-black);
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+.mcp-studio__method-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.mcp-studio__method-note {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+/* Brief / textarea */
+
+.mcp-studio__textarea {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid var(--gray-300);
+  outline: none;
+  background: none;
+  resize: vertical;
+  color: var(--ink-black);
+  width: 100%;
+}
+
+/* Quantity */
+
+.mcp-studio__qty-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding-top: 20px;
+  flex-wrap: wrap;
+}
+
+.mcp-studio__qty-stepper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.mcp-studio__qty-control {
+  display: inline-flex;
+  border: 1px solid var(--gray-300);
+}
+
+.mcp-studio__qty-control button {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  width: 34px;
+  height: 36px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.mcp-studio__qty-control span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  width: 38px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid var(--gray-300);
+  border-right: 1px solid var(--gray-300);
+}
+
+/* Contact fields */
+
+.mcp-studio__contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  padding-top: 22px;
+}
+
+@media (max-width: 575.98px) {
+  .mcp-studio__contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mcp-studio__input {
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 1px solid var(--gray-300);
+  outline: none;
+  background: none;
+  color: var(--ink-black);
+  width: 100%;
+}
+
+.mcp-studio__input:focus {
+  border-bottom-color: var(--ink-black);
+}
+
+/* Summary */
+
+.mcp-studio__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 22px;
+  border-top: 1px solid var(--gray-300);
+  margin-top: 24px;
+}
+
+.mcp-studio__summary-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mcp-studio__summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 12px;
+  margin-top: 6px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.mcp-studio__summary-total-value {
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+/* Submit */
+
+.mcp-studio__submit-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 22px;
+}
+
+.mcp-studio__submit {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  flex: 1 1 220px;
+  background: var(--ink-black);
+  color: #fff;
+  border: none;
+  padding: 16px 28px;
+  cursor: pointer;
+}
+
+.mcp-studio__submit:hover {
+  background: #2a2a2a;
+}
+
+/* Specs footer */
+
+.mcp-studio__specs {
+  margin-top: clamp(56px, 7vw, 96px);
+  padding-top: 34px;
+  border-top: 1px solid var(--gray-300);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 44px;
+}
+
+@media (max-width: 767.98px) {
+  .mcp-studio__specs {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mcp-studio__spec {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mcp-studio__spec-head {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.mcp-studio__spec p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-body);
+  margin: 0;
+  max-width: 36ch;
+}

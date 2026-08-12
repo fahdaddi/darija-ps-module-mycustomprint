@@ -1,0 +1,22 @@
+New custom print request
+
+Customer
+--------
+{firstname} {lastname}
+{email}
+{phone}
+
+Order
+-----
+Blank: {blank}
+Placement: {placement}
+Method: {method}
+Size: {size}
+Quantity: {quantity}
+Estimate: {estimated_total}
+
+Brief
+-----
+{brief}
+
+Artwork: {artwork_block_text}

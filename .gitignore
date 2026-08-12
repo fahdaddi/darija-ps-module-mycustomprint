@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+upload/*
+!upload/.htaccess
+!upload/index.php

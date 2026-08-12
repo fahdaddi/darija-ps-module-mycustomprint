@@ -1,0 +1,14 @@
+{
+  "name": "darijastile/mycustomprint",
+  "description": "Custom Print Studio quote-request module for the Darija Stile PrestaShop theme",
+  "type": "prestashop-module",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Darija Stile"
+    }
+  ],
+  "require": {
+    "php": ">=7.2.5"
+  }
+}
