@@ -6,14 +6,26 @@
 <div class="mcp-studio__preview">
   <div class="mcp-studio__frame" data-mcp-frame>
     {foreach from=$blanks item=blank}
-      <img
-        class="mcp-studio__blank-photo"
-        data-mcp-blank-photo="{$blank.id|escape:'html':'UTF-8'}"
-        src="{$module_dir|default:''}views/img/blanks/{$blank.id|escape:'html':'UTF-8'}.jpg"
-        alt="{$blank.label|escape:'html':'UTF-8'}"
-        hidden
-        onerror="this.hidden=true"
-      >
+      {if $blank.image_front_url}
+        <img
+          class="mcp-studio__blank-photo"
+          data-mcp-blank-photo="{$blank.id|escape:'html':'UTF-8'}"
+          data-mcp-blank-side="front"
+          src="{$blank.image_front_url|escape:'html':'UTF-8'}"
+          alt="{$blank.label|escape:'html':'UTF-8'}"
+          hidden
+        >
+      {/if}
+      {if $blank.image_back_url}
+        <img
+          class="mcp-studio__blank-photo"
+          data-mcp-blank-photo="{$blank.id|escape:'html':'UTF-8'}"
+          data-mcp-blank-side="back"
+          src="{$blank.image_back_url|escape:'html':'UTF-8'}"
+          alt="{$blank.label|escape:'html':'UTF-8'}"
+          hidden
+        >
+      {/if}
     {/foreach}
     <div class="mcp-studio__blank-placeholder" data-mcp-blank-placeholder>
       {l s='Blank product photo' d='Modules.Mycustomprint.Shop'}

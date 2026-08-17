@@ -91,9 +91,13 @@
     }
 
     function updateBlankPhoto() {
+      // Only front/back photos are configurable; pocket/sleeve placements
+      // reuse the front photo since there's no dedicated angle for them.
+      var side = state.placement === 'back' ? 'back' : 'front';
+
       var activeImg = null;
       els.blankPhotos.forEach(function (img) {
-        var isActive = img.dataset.mcpBlankPhoto === state.blank.id;
+        var isActive = img.dataset.mcpBlankPhoto === state.blank.id && img.dataset.mcpBlankSide === side;
         img.style.display = isActive ? '' : 'none';
         if (isActive) {
           activeImg = img;
@@ -101,7 +105,7 @@
       });
 
       if (els.blankPlaceholder) {
-        els.blankPlaceholder.textContent = 'Drop a blank ' + state.blank.label.toLowerCase() + ' photo';
+        els.blankPlaceholder.textContent = 'No ' + side + ' photo yet for ' + state.blank.label.toLowerCase();
       }
 
       if (!activeImg) {
@@ -247,6 +251,7 @@
           btn.classList.toggle('mcp-studio__placement-option--active', btn.dataset.placementId === placementId);
         });
       }
+      updateBlankPhoto();
       updatePlacementLabel();
       updatePrintArea();
       recomputeEstimate();

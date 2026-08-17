@@ -1,5 +1,5 @@
 <div class="panel">
-  <form action="{$form_action}" method="post" id="mycustomprint-settings">
+  <form action="{$form_action}" method="post" id="mycustomprint-settings" enctype="multipart/form-data">
     <div class="panel-heading">
       <i class="icon icon-cogs"></i> {l s='Custom Print Studio settings' d='Modules.Mycustomprint.Shop'}
     </div>
@@ -28,7 +28,7 @@
 
     <hr>
     <h4>{l s='Blank products' d='Modules.Mycustomprint.Shop'}</h4>
-    <p class="help-block">{l s='Up to 6 rows. Leave the label empty to skip a row.' d='Modules.Mycustomprint.Shop'}</p>
+    <p class="help-block">{l s='Up to 6 rows. Leave the label empty to skip a row. Front/back photos are optional — JPG, PNG or WEBP, up to 5 MB. Uploading a new photo replaces the current one; leaving it empty keeps it.' d='Modules.Mycustomprint.Shop'}</p>
     <table class="table">
       <thead>
         <tr>
@@ -36,6 +36,8 @@
           <th>{l s='Label' d='Modules.Mycustomprint.Shop'}</th>
           <th>{l s='Base price' d='Modules.Mycustomprint.Shop'}</th>
           <th>{l s='Note' d='Modules.Mycustomprint.Shop'}</th>
+          <th>{l s='Front photo' d='Modules.Mycustomprint.Shop'}</th>
+          <th>{l s='Back photo' d='Modules.Mycustomprint.Shop'}</th>
         </tr>
       </thead>
       <tbody>
@@ -45,6 +47,18 @@
             <td><input type="text" name="blank_label_{$smarty.foreach.blanks.index}" class="form-control" value="{$blank.label|escape:'html':'UTF-8'}"></td>
             <td><input type="number" step="0.01" min="0" name="blank_base_{$smarty.foreach.blanks.index}" class="form-control" value="{$blank.base|escape:'html':'UTF-8'}"></td>
             <td><input type="text" name="blank_note_{$smarty.foreach.blanks.index}" class="form-control" value="{$blank.note|escape:'html':'UTF-8'}"></td>
+            <td>
+              {if $blank.image_front_url}
+                <img src="{$blank.image_front_url|escape:'html':'UTF-8'}" alt="" style="max-width:60px;max-height:60px;display:block;margin-bottom:6px;">
+              {/if}
+              <input type="file" name="blank_image_front_{$smarty.foreach.blanks.index}" accept="image/jpeg,image/png,image/webp" class="form-control">
+            </td>
+            <td>
+              {if $blank.image_back_url}
+                <img src="{$blank.image_back_url|escape:'html':'UTF-8'}" alt="" style="max-width:60px;max-height:60px;display:block;margin-bottom:6px;">
+              {/if}
+              <input type="file" name="blank_image_back_{$smarty.foreach.blanks.index}" accept="image/jpeg,image/png,image/webp" class="form-control">
+            </td>
           </tr>
         {/foreach}
       </tbody>

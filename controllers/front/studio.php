@@ -398,8 +398,15 @@ class MyCustomPrintStudioModuleFrontController extends ModuleFrontController
 
         $this->sentOk = (bool) Tools::getValue('sent');
 
+        $blanks = $this->module->getBlanks();
+        foreach ($blanks as &$blank) {
+            $blank['image_front_url'] = $this->module->getBlankImageUrl($blank['image_front'] ?? '');
+            $blank['image_back_url'] = $this->module->getBlankImageUrl($blank['image_back'] ?? '');
+        }
+        unset($blank);
+
         $this->context->smarty->assign([
-            'blanks' => $this->module->getBlanks(),
+            'blanks' => $blanks,
             'methods' => $this->module->getMethods(),
             'placements' => [
                 ['id' => 'front', 'label' => 'Front chest'],

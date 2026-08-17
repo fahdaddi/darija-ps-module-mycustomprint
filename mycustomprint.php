@@ -18,16 +18,35 @@ class MyCustomPrint extends Module
     const CONFIG_NOTIFY_EMAIL = 'MYCUSTOMPRINT_NOTIFY_EMAIL';
 
     const DEFAULT_BLANKS = [
-        ['id' => 'tee', 'label' => 'Classic tee', 'base' => 189, 'note' => '220gsm combed cotton'],
-        ['id' => 'oversized', 'label' => 'Oversized tee', 'base' => 239, 'note' => 'Boxy cut, dropped shoulder'],
-        ['id' => 'hoodie', 'label' => 'Hoodie', 'base' => 399, 'note' => '350gsm brushed fleece'],
-        ['id' => 'mug', 'label' => 'Mug', 'base' => 89, 'note' => 'Ceramic, 330ml'],
+        ['id' => 'tee', 'label' => 'Classic tee', 'base' => 189, 'note' => '220gsm combed cotton', 'image_front' => '', 'image_back' => ''],
+        ['id' => 'oversized', 'label' => 'Oversized tee', 'base' => 239, 'note' => 'Boxy cut, dropped shoulder', 'image_front' => '', 'image_back' => ''],
+        ['id' => 'hoodie', 'label' => 'Hoodie', 'base' => 399, 'note' => '350gsm brushed fleece', 'image_front' => '', 'image_back' => ''],
+        ['id' => 'mug', 'label' => 'Mug', 'base' => 89, 'note' => 'Ceramic, 330ml', 'image_front' => '', 'image_back' => ''],
     ];
+
+    const BLANK_IMAGE_ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
+    const BLANK_IMAGE_ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+    const BLANK_IMAGE_MAX_SIZE = 5242880; // 5 MB
 
     const DEFAULT_METHODS = [
         ['id' => 'dtf', 'label' => 'DTF transfer', 'note' => 'Any artwork, photographic detail', 'fee' => 0],
         ['id' => 'sub', 'label' => 'Sublimation', 'note' => 'Edge-to-edge, light fabrics only', 'fee' => 25],
         ['id' => 'embro', 'label' => 'Embroidery', 'note' => 'Line art and text only', 'fee' => 60],
+    ];
+
+    /**
+     * Registers the admin menu entry (Modules > Custom Print Studio) —
+     * consumed automatically by ModuleTabRegister during install(), same
+     * mechanism psshipping/blockwishlist use for their own settings pages.
+     * class_name must match the controller file under controllers/admin/.
+     */
+    public $tabs = [
+        [
+            'class_name' => 'AdminMyCustomPrintSettings',
+            'visible' => true,
+            'name' => 'Custom Print Studio',
+            'parent_class_name' => 'AdminParentModulesSf',
+        ],
     ];
 
     public function __construct()
@@ -59,15 +78,146 @@ class MyCustomPrint extends Module
             && Configuration::updateValue(self::CONFIG_NOTIFY_EMAIL, Configuration::get('PS_SHOP_EMAIL'));
     }
 
+    /**
+     * views/img/blanks/ holds admin-uploaded blank product photos. Git doesn't
+     * track empty directories, so a fresh clone won't have it — create it
+     * defensively rather than assuming it survived deployment.
+     */
+    protected function getBlankImagesDir()
+    {
+        $dir = $this->getLocalPath() . 'views/img/blanks/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        return $dir;
+    }
+
+    /**
+     * Validates and stores one uploaded blank photo. Returns the new stored
+     * filename, or null if this specific input had no file (leave existing
+     * image untouched — this is not an error). Validation failures are
+     * appended to $errors by reference and also return null, so a bad
+     * upload doesn't silently wipe the existing image.
+     */
+    protected function handleBlankImageUpload($inputName, array &$errors)
+    {
+        if (empty($_FILES[$inputName]['tmp_name']) || $_FILES[$inputName]['error'] === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        if ($_FILES[$inputName]['error'] !== UPLOAD_ERR_OK) {
+            $errors[] = $this->l('The file could not be uploaded. Please try again.');
+
+            return null;
+        }
+
+        if ($_FILES[$inputName]['size'] > self::BLANK_IMAGE_MAX_SIZE) {
+            $errors[] = $this->l('That image is too large. The limit is 5 MB.');
+
+            return null;
+        }
+
+        $originalName = $_FILES[$inputName]['name'];
+        $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        if (!in_array($ext, self::BLANK_IMAGE_ALLOWED_EXTENSIONS, true)) {
+            $errors[] = $this->l('Unsupported image type. Use JPG, PNG or WEBP.');
+
+            return null;
+        }
+
+        if (!is_uploaded_file($_FILES[$inputName]['tmp_name'])) {
+            $errors[] = $this->l('The file could not be uploaded. Please try again.');
+
+            return null;
+        }
+
+        $realMime = $this->detectImageMimeType($_FILES[$inputName]['tmp_name']);
+        if ($realMime && !in_array($realMime, self::BLANK_IMAGE_ALLOWED_MIME_TYPES, true)) {
+            $errors[] = $this->l('Unsupported image type. Use JPG, PNG or WEBP.');
+
+            return null;
+        }
+
+        $safeBaseName = Tools::str2url(pathinfo($originalName, PATHINFO_FILENAME));
+        if ($safeBaseName === '') {
+            $safeBaseName = 'blank';
+        }
+        $filename = $safeBaseName . '_' . uniqid('', true) . '.' . $ext;
+
+        if (!move_uploaded_file($_FILES[$inputName]['tmp_name'], $this->getBlankImagesDir() . $filename)) {
+            $errors[] = $this->l('The image could not be saved. Please try again.');
+
+            return null;
+        }
+
+        return $filename;
+    }
+
+    /**
+     * Same finfo-based content MIME detection used by the front controller's
+     * artwork upload handler (studio.php::detectMimeType) — kept as a
+     * separate copy since front and admin controllers don't share a base
+     * class here, but the logic is identical.
+     */
+    protected function detectImageMimeType($filename)
+    {
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $filename);
+            finfo_close($finfo);
+            if ($mimeType) {
+                return $mimeType;
+            }
+        }
+
+        if (function_exists('mime_content_type')) {
+            $mimeType = mime_content_type($filename);
+            if ($mimeType) {
+                return $mimeType;
+            }
+        }
+
+        return null;
+    }
+
+    protected function deleteBlankImage($filename)
+    {
+        if ($filename === '') {
+            return;
+        }
+        $path = $this->getBlankImagesDir() . basename($filename);
+        if (is_file($path)) {
+            unlink($path);
+        }
+    }
+
     public function uninstall()
     {
         return $this->uninstallDb()
+            && $this->uninstallTab()
             && Configuration::deleteByName(self::CONFIG_BLANKS)
             && Configuration::deleteByName(self::CONFIG_METHODS)
             && Configuration::deleteByName(self::CONFIG_BACK_PLACEMENT_FEE)
             && Configuration::deleteByName(self::CONFIG_CURRENCY_LABEL)
             && Configuration::deleteByName(self::CONFIG_NOTIFY_EMAIL)
             && parent::uninstall();
+    }
+
+    /**
+     * ModuleTabRegister installs tabs declared in $this->tabs automatically,
+     * but core never cleans them up on uninstall — same manual pattern
+     * dashgoals.php uses for its own admin tab.
+     */
+    protected function uninstallTab()
+    {
+        $idTab = (int) Tab::getIdFromClassName('AdminMyCustomPrintSettings');
+        if ($idTab) {
+            $tab = new Tab($idTab);
+            $tab->delete();
+        }
+
+        return true;
     }
 
     protected function installDb()
@@ -140,18 +290,46 @@ class MyCustomPrint extends Module
             return $this->displayError($this->l('Please enter a valid notification email address.'));
         }
 
+        // Existing blanks, keyed by the same row index the form was rendered
+        // with, so an untouched file input keeps its current image instead
+        // of clearing it.
+        $existingBlanks = array_values(json_decode(Configuration::get(self::CONFIG_BLANKS), true) ?: self::DEFAULT_BLANKS);
+
         $blanks = [];
+        $uploadErrors = [];
         for ($i = 0; $i < 6; $i++) {
             $label = trim((string) Tools::getValue('blank_label_' . $i));
             if ($label === '') {
                 continue;
             }
+
+            $imageFront = isset($existingBlanks[$i]['image_front']) ? $existingBlanks[$i]['image_front'] : '';
+            $imageBack = isset($existingBlanks[$i]['image_back']) ? $existingBlanks[$i]['image_back'] : '';
+
+            $newFront = $this->handleBlankImageUpload('blank_image_front_' . $i, $uploadErrors);
+            if ($newFront !== null) {
+                $this->deleteBlankImage($imageFront);
+                $imageFront = $newFront;
+            }
+
+            $newBack = $this->handleBlankImageUpload('blank_image_back_' . $i, $uploadErrors);
+            if ($newBack !== null) {
+                $this->deleteBlankImage($imageBack);
+                $imageBack = $newBack;
+            }
+
             $blanks[] = [
                 'id' => Tools::getValue('blank_id_' . $i) ?: Tools::str2url($label),
                 'label' => $label,
                 'base' => (float) Tools::getValue('blank_base_' . $i),
                 'note' => trim((string) Tools::getValue('blank_note_' . $i)),
+                'image_front' => $imageFront,
+                'image_back' => $imageBack,
             ];
+        }
+
+        if (!empty($uploadErrors)) {
+            return $this->displayError(implode('<br>', $uploadErrors));
         }
 
         $methods = [];
@@ -186,19 +364,35 @@ class MyCustomPrint extends Module
 
     protected function renderSettingsForm()
     {
-        $blanks = json_decode(Configuration::get(self::CONFIG_BLANKS), true) ?: self::DEFAULT_BLANKS;
+        $blanks = array_values(json_decode(Configuration::get(self::CONFIG_BLANKS), true) ?: self::DEFAULT_BLANKS);
         $methods = json_decode(Configuration::get(self::CONFIG_METHODS), true) ?: self::DEFAULT_METHODS;
+
+        $blanks = array_pad($blanks, 6, ['id' => '', 'label' => '', 'base' => '', 'note' => '', 'image_front' => '', 'image_back' => '']);
+        foreach ($blanks as &$blank) {
+            $blank['image_front_url'] = $this->getBlankImageUrl($blank['image_front'] ?? '');
+            $blank['image_back_url'] = $this->getBlankImageUrl($blank['image_back'] ?? '');
+        }
+        unset($blank);
 
         $this->context->smarty->assign([
             'notify_email' => Configuration::get(self::CONFIG_NOTIFY_EMAIL),
             'back_placement_fee' => Configuration::get(self::CONFIG_BACK_PLACEMENT_FEE),
             'currency_label' => Configuration::get(self::CONFIG_CURRENCY_LABEL),
-            'blanks' => array_pad($blanks, 6, ['id' => '', 'label' => '', 'base' => '', 'note' => '']),
+            'blanks' => $blanks,
             'methods' => array_pad($methods, 6, ['id' => '', 'label' => '', 'note' => '', 'fee' => '']),
             'form_action' => $this->getModuleConfigurationPageLink(),
         ]);
 
         return $this->context->smarty->fetch($this->getLocalPath() . 'views/templates/admin/configure.tpl');
+    }
+
+    public function getBlankImageUrl($filename)
+    {
+        if ($filename === '' || $filename === null) {
+            return '';
+        }
+
+        return $this->getPathUri() . 'views/img/blanks/' . $filename;
     }
 
     /**
